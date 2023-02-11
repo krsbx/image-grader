@@ -6,11 +6,11 @@ const router = Router();
 // POST /grades
 router.post(
   '/',
-  gradesMw.verifyPayloadMw,
-  gradesMw.createImagesMw,
-  gradesMw.readImagesMw,
-  gradesMw.gradeImagesMw,
-  gradesMw.returnGradesMw
+  gradesMw.validateMw,
+  gradesMw.uploadMw,
+  gradesMw.loadMw,
+  gradesMw.predictMw,
+  gradesMw.returnMw
 );
 
 export default router;
