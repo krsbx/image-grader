@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import jimp from 'jimp';
 import path from 'path';
-import { IMAGE_DIR_PATH } from './constant';
+import { BASE64_RE, IMAGE_DIR_PATH } from './constant';
 import OpenCv from './OpenCv';
 
 export const openImage = (buffer: Buffer) =>
@@ -17,7 +17,7 @@ export const openImage = (buffer: Buffer) =>
   });
 
 export const createImage = async (imageData: string, fileName: string) => {
-  const buffer = Buffer.from(imageData.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+  const buffer = Buffer.from(imageData.replace(BASE64_RE, ''), 'base64');
 
   const image = await openImage(buffer);
   const extension = image.getExtension();

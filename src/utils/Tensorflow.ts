@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs-node';
 import path from 'path';
-import { GRADES, ROOT_PATH } from '../utils/constant';
+import { GRADES, MODEL_PATH } from '../utils/constant';
 
 class Tensorflow {
   private static _instance: Tensorflow;
@@ -12,9 +12,7 @@ class Tensorflow {
     if (Tensorflow._instance) return;
     Tensorflow._instance = new Tensorflow();
 
-    const model = await tf.loadLayersModel(
-      'file://' + path.resolve(ROOT_PATH, 'bin/model/model.json')
-    );
+    const model = await tf.loadLayersModel('file://' + path.resolve(MODEL_PATH, 'model.json'));
     Tensorflow._model = model;
   }
 
@@ -31,17 +29,24 @@ class Tensorflow {
   }
 
   public async predict(imageData: number[][][]) {
+    const start = performance.now();
+
     const tensor = tf.tensor4d([imageData]);
 
     const result = Tensorflow.model.predict(tensor);
+    let resultData: Float32Array | Int32Array | Uint8Array;
 
     if (!Array.isArray(result)) {
-      const resultData = await result.data();
-      return Object.values(GRADES)[resultData.indexOf(Math.max(...resultData))];
+      resultData = await result.data();
+    } else {
+      resultData = await result[0].data();
     }
+    const end = performance.now();
 
-    const resultData = await result[0].data();
-    return Object.values(GRADES)[resultData.indexOf(Math.max(...resultData))];
+    return {
+      score: Object.values(GRADES)[resultData.indexOf(Math.max(...resultData))],
+      times: end - start,
+    };
   }
 }
 

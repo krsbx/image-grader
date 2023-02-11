@@ -1,6 +1,8 @@
-import type cv from 'mirada';
 import canvas from 'canvas';
 import { JSDOM } from 'jsdom';
+import type cv from 'mirada';
+import path from 'path';
+import { BIN_PATH } from './constant';
 
 class OpenCv {
   private static _cv: typeof cv;
@@ -28,7 +30,7 @@ class OpenCv {
       globalThis.Module = {
         onRuntimeInitialized: resolve,
       };
-      var cv = require('./bin/opencv.js');
+      var cv = require(path.resolve(BIN_PATH, 'opencv.js'));
       globalThis.cv = cv;
 
       OpenCv._cv = cv;
