@@ -68,6 +68,44 @@ class OpenCv {
 
     return dest;
   }
+
+  public async convertToNumpyFormat(src: cv.Mat) {
+    const informations = {
+      width: src.cols,
+      height: src.rows,
+      data: src.data as Uint8Array,
+      channels: src.channels(),
+      get size() {
+        return this.width * this.height * this.channels;
+      },
+      get limit() {
+        return Math.max(this.width, this.height) * this.channels;
+      },
+      totalSkip: 0,
+    };
+
+    const dest: number[][][] = [];
+
+    for (let i = 0; i < informations.size; i += informations.limit) {
+      const start = informations.totalSkip > 0 ? informations.totalSkip : 0;
+      const end =
+        informations.totalSkip > 0
+          ? informations.totalSkip + informations.limit
+          : informations.limit;
+
+      const newArr = informations.data.slice(start, end);
+      const arr: number[][] = [];
+
+      for (let j = 0; j < newArr.length; j += informations.channels) {
+        arr.push([newArr[j], newArr[j + 1], newArr[j + 2]]);
+      }
+
+      dest.push(arr);
+      informations.totalSkip += informations.limit;
+    }
+
+    return dest;
+  }
 }
 
 export default OpenCv;
