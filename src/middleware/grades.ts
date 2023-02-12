@@ -7,7 +7,7 @@ import { resolvePromise } from '../utils/resolver';
 import Tensorflow from '../utils/Tensorflow';
 import { gradeSchema } from '../utils/validator';
 
-export const validateMw = asyncMw(async (req, res, next) => {
+export const validatePayloadMw = asyncMw(async (req, res, next) => {
   try {
     gradeSchema.parse(_.values(req.body));
 
@@ -23,7 +23,7 @@ export const validateMw = asyncMw(async (req, res, next) => {
   }
 });
 
-export const uploadMw = asyncMw(async (req, res, next) => {
+export const uploadImageMw = asyncMw(async (req, res, next) => {
   await cleanUpImageDir();
 
   await Promise.all(_.map(req.body, (value, key) => resolvePromise(createImage(value, key))));
@@ -31,13 +31,13 @@ export const uploadMw = asyncMw(async (req, res, next) => {
   return next();
 });
 
-export const loadMw = asyncMw(async (req, res, next) => {
+export const loadImageMw = asyncMw(async (req, res, next) => {
   req.images = await Promise.all(_.map(req.body, (_, key) => loadImageToCv(key)));
 
   return next();
 });
 
-export const predictMw = asyncMw(async (req, res, next) => {
+export const predictImageMw = asyncMw(async (req, res, next) => {
   req.grades = await Promise.all(
     _.map(req.images, ([image, err]: Awaited<ReturnType<typeof loadImageToCv>>) => {
       if (err || !image)
@@ -53,7 +53,7 @@ export const predictMw = asyncMw(async (req, res, next) => {
   return next();
 });
 
-export const returnMw = asyncMw(async (req, res, next) => {
+export const returnResultMw = asyncMw(async (req, res, next) => {
   if (!req.grades)
     return res.status(400).json({
       code: 400,

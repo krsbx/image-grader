@@ -14,19 +14,14 @@ class OpenCv {
     const dom = new JSDOM();
     globalThis.document = dom.window.document;
 
-    // @ts-ignore
-    globalThis.Image = canvas.Image;
-    // @ts-ignore
-    globalThis.HTMLCanvasElement = canvas.Canvas;
-    // @ts-ignore
-    globalThis.ImageData = canvas.ImageData;
-    // @ts-ignore
-    globalThis.HTMLImageElement = canvas.Image;
+    globalThis.Image = canvas.Image as unknown as typeof globalThis.Image;
+    globalThis.HTMLCanvasElement = canvas.Canvas as unknown as typeof globalThis.HTMLCanvasElement;
+    globalThis.ImageData = canvas.ImageData as unknown as typeof globalThis.ImageData;
+    globalThis.HTMLImageElement = canvas.Image as unknown as typeof globalThis.HTMLImageElement;
   }
 
   private static setupCV() {
     return new Promise((resolve) => {
-      // @ts-ignore
       globalThis.Module = {
         onRuntimeInitialized: resolve,
       };

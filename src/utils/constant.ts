@@ -1,6 +1,6 @@
 import path from 'path';
 
-export const ROOT_PATH = path.join(__dirname, process.env.DEVELOPMENT ? '../../' : '../../../');
+export const ROOT_PATH = path.join(__dirname, '../../');
 
 export const BIN_PATH = path.join(ROOT_PATH, 'bin');
 export const MODEL_PATH = path.join(ROOT_PATH, 'bin/model');
