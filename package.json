@@ -5,12 +5,12 @@
   "repository": "git@github.com:krsbx/image-grader.git",
   "author": "Muhammad Firdaus Sati <firdaus.sati51@gmail.cm>",
   "scripts": {
-    "start": "node dist/src/index.js",
+    "start": "node dist/index.js",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "dev": "cross-env DEVELOPMENT=true nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "prepare": "husky install",
-    "test": "cross-env DEVELOPMENT=true jest -i ./test/*.test.ts"
+    "test": "jest -i ./test/*.test.ts"
   },
   "license": "MIT",
   "devDependencies": {

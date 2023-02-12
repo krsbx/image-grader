@@ -1,6 +1,5 @@
-import cv from 'mirada';
+import { Canvas, Image } from 'canvas';
 import { JSDOM } from 'jsdom';
-import { Canvas, Image, ImageData, loadImage } from 'canvas';
 
 declare global {
   var document: JSDOM['window']['Document'];
@@ -9,7 +8,11 @@ declare global {
   var ImageData: ImageData;
   var HTMLImageElement: Image;
 
-  var cv: typeof cv;
+  var cv: import('mirada');
+
+  var Module: {
+    onRuntimeInitialized: (...args: unknown[]) => void;
+  };
 }
 
 export {};
