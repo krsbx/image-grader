@@ -22,7 +22,11 @@ class OpenCv {
 
   private static setupCV() {
     return new Promise((resolve) => {
-      globalThis.Module = {
+      (
+        globalThis as unknown as {
+          Module: Record<string, Function>;
+        }
+      ).Module = {
         onRuntimeInitialized: resolve,
       };
       var cv = require(path.resolve(BIN_PATH, 'opencv.js'));
