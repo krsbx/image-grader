@@ -4,7 +4,7 @@ import { cleanUpImageDir, createImage, loadImageToCv } from '../src/utils/common
 import { GRADES } from '../src/utils/constant';
 import Tensorflow from '../src/utils/Tensorflow';
 import { isImageExist, loadImageToBase64 } from './utils/common';
-import { createMockApi, createPostRequest } from './utils/mock';
+import { createBulkRequest, createMockApi, createPostRequest } from './utils/mock';
 
 describe('Image Grader', () => {
   let app: Express;
@@ -56,5 +56,15 @@ describe('Image Grader', () => {
     const grade = await Tensorflow.instance.predict(image);
 
     expect(grade).toBeTruthy();
+  });
+
+  it('Cant handle multiple predictions request', async () => {
+    const responses = _(await createBulkRequest(app))
+      .map(({ body: { data } }) => data[0])
+      .value();
+
+    expect(
+      responses.map(({ score }) => score).every((score) => Object.values(GRADES).includes(score))
+    ).toBe(true);
   });
 });
