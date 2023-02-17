@@ -17,11 +17,11 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            sudo bash
-            cd /root/image-grader
+            cd ~/image-grader
             git fetch origin
             git checkout main
             git pull
             pm2 stop all
+            yarn
             yarn build
             pm2 start all
