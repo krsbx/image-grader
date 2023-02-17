@@ -18,7 +18,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             sudo bash
-            cd ~/image-grader
+            cd /root/image-grader
             git fetch origin
             git checkout main
             git pull
