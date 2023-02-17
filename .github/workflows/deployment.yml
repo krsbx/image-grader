@@ -1,0 +1,27 @@
+name: Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: 'Rebuild backend'
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: rebuild backend
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.CLOUD_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            sudo bash
+            cd ~/image-grader
+            git fetch origin
+            git checkout main
+            git pull
+            pm2 stop all
+            yarn build
+            pm2 start all
