@@ -34,13 +34,10 @@ class Tensorflow {
     const tensor = tf.tensor4d([imageData]);
 
     const result = Tensorflow.model.predict(tensor);
-    let resultData: Float32Array | Int32Array | Uint8Array;
+    const resultData: Float32Array | Int32Array | Uint8Array = Array.isArray(result)
+      ? await result[0].data()
+      : await result.data();
 
-    if (!Array.isArray(result)) {
-      resultData = await result.data();
-    } else {
-      resultData = await result[0].data();
-    }
     const end = performance.now();
 
     return {
