@@ -5,12 +5,66 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: 'Rebuild backend'
+  cleanup:
+    name: 'Prepare server for deployment'
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: rebuild backend
+      - name: clean up data
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.CLOUD_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo "Removing previous builds..."
+            rm -rf ~/image-grader/release.zip
+
+  build:
+    name: 'Build backend assets'
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: cleanup
+    steps:
+      - name: checkout main
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: install depedencies with yarn
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: build backend assets
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+
+      - name: compress artifact
+        run: zip release.zip ./dist -r
+
+      - name: upload to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.CLOUD_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: ./release.zip
+          target: '~/image-grader'
+
+  deploy:
+    name: 'Deploy to server'
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: deploying
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.CLOUD_HOST }}
@@ -21,11 +75,12 @@ jobs:
             source ~/.nvm/nvm.sh
             node --version
             pwd
+            echo "Starting deployment to server..."
             cd ~/image-grader
+            pm2 stop backend && pm2 reset backend
             git fetch origin
             git checkout main
             git pull
-            pm2 stop backend && pm2 reset backend
-            yarn
-            yarn build
+            unzip -o ~/image-grader/release.zip -d ~/image-grader
             pm2 start backend
+            echo "Deployment to server completed"
