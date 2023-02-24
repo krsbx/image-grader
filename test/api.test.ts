@@ -1,10 +1,24 @@
+import { config as dotenvConfig } from 'dotenv';
+import { expand as expandDotenv } from 'dotenv-expand';
 import { Express } from 'express';
 import _ from 'lodash';
-import { cleanUpImageDir, createImage, loadImageToCv } from '../src/utils/common';
+import {
+  cleanUpImageDir,
+  createImage,
+  loadImageToCv,
+  readImageDir,
+} from '../src/utils/common';
 import { GRADES } from '../src/utils/constant';
 import Tensorflow from '../src/utils/Tensorflow';
 import { isImageExist, loadImageToBase64 } from './utils/common';
-import { createBulkRequest, createMockApi, createPostRequest } from './utils/mock';
+import { startLoadTest } from './utils/loadtest';
+import {
+  createBulkRequest,
+  createMockApi,
+  createPostRequest,
+} from './utils/mock';
+
+expandDotenv(dotenvConfig());
 
 describe('Image Grader', () => {
   let app: Express;
@@ -14,19 +28,35 @@ describe('Image Grader', () => {
   });
 
   it('Can save payloads to the disks', async () => {
+    await cleanUpImageDir();
+
     await createPostRequest(app).send({
       A: await loadImageToBase64('images/img-A-45.jpg'),
     });
 
-    expect(await isImageExist('A.jpg')).toBe(true);
+    const dirInfos = await readImageDir();
+
+    const exists = await Promise.all(
+      _.map(dirInfos, (dirInfo) => isImageExist(`${dirInfo}/0.jpg`))
+    );
+
+    expect(_.includes(exists, true)).toBe(true);
   });
 
   it("Can't save a random payloads to the disks", async () => {
+    await cleanUpImageDir();
+
     await createPostRequest(app).send({
       A: 'the/_random/_text',
     });
 
-    expect(await isImageExist('A.jpg')).toBe(false);
+    const dirInfos = await readImageDir();
+
+    const exists = await Promise.all(
+      _.map(dirInfos, (dirInfo) => isImageExist(`${dirInfo}/0.jpg`))
+    );
+
+    expect(_.includes(exists, true)).toBe(false);
   });
 
   it('Can trigger the predict functions', async () => {
@@ -42,13 +72,18 @@ describe('Image Grader', () => {
       BC: await loadImageToBase64('images/img-BC-101.jpg'),
     });
 
-    expect(_.intersection(Object.values(GRADES), [body.data[0].score]).length).toBe(1);
+    expect(
+      _.intersection(Object.values(GRADES), [body.data[0].score]).length
+    ).toBe(1);
   });
 
   it('Predict can predict the grade of the images', async () => {
     const fileName = 'test-image';
     await cleanUpImageDir();
-    await createImage(await loadImageToBase64('images/img-AB-231.jpg'), fileName);
+    await createImage(
+      await loadImageToBase64('images/img-AB-231.jpg'),
+      fileName
+    );
     const [image, error] = await loadImageToCv(fileName);
 
     if (error || !image) return;
@@ -64,7 +99,21 @@ describe('Image Grader', () => {
       .value();
 
     expect(
-      responses.map(({ score }) => score).every((score) => Object.values(GRADES).includes(score))
+      responses
+        .map(({ score }) => score)
+        .every((score) => Object.values(GRADES).includes(score))
     ).toBe(true);
+  });
+
+  it('Can handle lot of requests', async () => {
+    const port = +(process.env?.PORT ?? 3001);
+    const server = app.listen(port, () =>
+      console.log(`Server are running on port ${port}`)
+    );
+
+    const result = await startLoadTest();
+    server.close();
+
+    expect(result.totalRequests).toBe(100);
   });
 });

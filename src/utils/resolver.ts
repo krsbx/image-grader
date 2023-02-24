@@ -7,3 +7,18 @@ export const resolvePromise = async <T>(callback: T) => {
     return [null, err] as const;
   }
 };
+
+export const sequentialPromise = async <
+  T extends unknown[],
+  U = Awaited<T[number]>
+>(
+  tasks: T
+) => {
+  const results: U[] = [];
+
+  for (const task of tasks) {
+    results.push((await task) as U);
+  }
+
+  return results;
+};
