@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import jimp from 'jimp';
+import _ from 'lodash';
 import path from 'path';
 import { BASE64_RE, IMAGE_DIR_PATH } from './constant';
 import OpenCv from './OpenCv';
@@ -30,24 +31,32 @@ export const createImage = async (imageData: string, fileName: string) => {
   return image.writeAsync(filePath);
 };
 
-export const removeImageDir = () =>
-  fs.rm(IMAGE_DIR_PATH, {
+export const concatPath = (...filePaths: (string | undefined | null)[]) => {
+  const paths = _.compact([...filePaths]);
+
+  return path.join(...paths);
+};
+
+export const removeImageDir = (filePath?: string) =>
+  fs.rm(concatPath(IMAGE_DIR_PATH, filePath), {
     recursive: true,
     force: true,
   });
 
-export const createImageDir = () => fs.mkdirp(IMAGE_DIR_PATH);
+export const createImageDir = (filePath?: string) =>
+  fs.mkdirp(concatPath(IMAGE_DIR_PATH, filePath));
 
-export const isImageDirExist = () => fs.exists(IMAGE_DIR_PATH);
+export const isImageDirExist = (filePath?: string) =>
+  fs.exists(concatPath(IMAGE_DIR_PATH, filePath));
 
-export const cleanUpImageDir = async () => {
-  if (!(await isImageDirExist())) return createImageDir();
+export const cleanUpImageDir = async (filePath?: string) => {
+  if (!(await isImageDirExist(filePath))) return createImageDir(filePath);
 
-  await removeImageDir();
-  return createImageDir();
+  await removeImageDir(filePath);
+  return createImageDir(filePath);
 };
 
-export const readImageDir = () => fs.readdir(IMAGE_DIR_PATH);
+export const readImageDir = (filePath?: string) => fs.readdir(concatPath(IMAGE_DIR_PATH, filePath));
 
 export const loadImageToCv = async (fileName: string) => {
   try {

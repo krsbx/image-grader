@@ -7,10 +7,10 @@ const router = Router();
 router.post(
   '/',
   gradesMw.validatePayloadMw,
-  gradesMw.uploadImageMw,
-  gradesMw.loadImageMw,
-  gradesMw.predictImageMw,
-  gradesMw.returnResultMw
+  gradesMw.saveImagesMw,
+  gradesMw.loadImagesMw,
+  gradesMw.predictImagesMw,
+  gradesMw.returnResultsMw
 );
 
 export default router;

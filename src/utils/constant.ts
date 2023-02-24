@@ -15,3 +15,8 @@ export const GRADES = {
   BC: 'BC',
   E: 'E',
 } as const;
+
+export const SERVER_MODE = {
+  DEVELOPMENT: 'DEVELOPMENT',
+  PRODUCTION: 'PRODUCTION',
+} as const;
