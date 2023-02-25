@@ -2,7 +2,12 @@ import asyncMw from 'express-asyncmw';
 import httpStatus from 'http-status';
 import _ from 'lodash';
 import { z } from 'zod';
-import { createImage, loadImageToCv } from '../utils/common';
+import {
+  createImage,
+  isImageDirExist,
+  loadImageToCv,
+  removeImageDir,
+} from '../utils/common';
 import { resolvePromise, sequentialPromise } from '../utils/resolver';
 import { RequestSchema, requestSchema } from '../utils/schema';
 import Tensorflow from '../utils/Tensorflow';
@@ -62,6 +67,9 @@ export const predictImagesMw = asyncMw(async (req, res, next) => {
 });
 
 export const returnResultsMw = asyncMw(async (req, res, next) => {
+  if (await isImageDirExist(req.query.times + ''))
+    await removeImageDir(req.query.times + '');
+
   if (!req.grades)
     return res.status(400).json({
       code: 400,
