@@ -12,7 +12,9 @@ class Tensorflow {
     if (Tensorflow._instance) return;
     Tensorflow._instance = new Tensorflow();
 
-    const model = await tf.loadLayersModel('file://' + path.resolve(MODEL_PATH, 'model.json'));
+    const model = await tf.loadLayersModel(
+      'file://' + path.resolve(MODEL_PATH, 'model.json')
+    );
     Tensorflow._model = model;
   }
 
@@ -34,7 +36,9 @@ class Tensorflow {
     const tensor = tf.tensor4d([imageData]);
 
     const result = Tensorflow.model.predict(tensor);
-    const resultData: Float32Array | Int32Array | Uint8Array = Array.isArray(result)
+    const resultData: Float32Array | Int32Array | Uint8Array = Array.isArray(
+      result
+    )
       ? await result[0].data()
       : await result.data();
 

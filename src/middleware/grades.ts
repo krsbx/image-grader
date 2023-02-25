@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { z } from 'zod';
 import { createImage, loadImageToCv } from '../utils/common';
 import { resolvePromise, sequentialPromise } from '../utils/resolver';
-import { requestSchema, RequestSchema } from '../utils/schema';
+import { RequestSchema, requestSchema } from '../utils/schema';
 import Tensorflow from '../utils/Tensorflow';
 
 export const validatePayloadMw = asyncMw(async (req, res, next) => {
