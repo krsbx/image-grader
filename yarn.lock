@@ -2935,10 +2935,10 @@ expect@^29.0.0, expect@^29.4.2:
     jest-message-util "^29.4.2"
     jest-util "^29.4.2"
 
-express-asyncmw@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/express-asyncmw/-/express-asyncmw-0.1.6.tgz#a7122d785e153444a16f84263bf05a09d5bcb405"
-  integrity sha512-b0C/Q220ynzNeUsFr6rGJphnDSzYGLDE1VSbXnbTUGw0elFUo7pGUR861TPlyl0Z3hN0Yp3hHW0ODqvamCp+Rg==
+express-asyncmw@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/express-asyncmw/-/express-asyncmw-0.2.1.tgz#b6ee253f5d9852b5936e9c1b35dafea60659dbe4"
+  integrity sha512-SBboVOpCLPRurNADN7iAvahM35J6/crpoWFUbzTR/qw7vm/DgnEsl5a7DYX7N1Iyoa/t3VLi5oKHoTdlICdgDg==
 
 express@^4.18.2:
   version "4.18.2"
