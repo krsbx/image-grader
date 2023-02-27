@@ -2,6 +2,7 @@ import asyncMw from 'express-asyncmw';
 import httpStatus from 'http-status';
 import _ from 'lodash';
 import { z } from 'zod';
+import type * as ImageGrader from '../types/ImageGrader';
 import {
   createImage,
   isImageDirExist,
