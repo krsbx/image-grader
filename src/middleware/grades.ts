@@ -3,12 +3,7 @@ import httpStatus from 'http-status';
 import _ from 'lodash';
 import { z } from 'zod';
 import type * as ImageGrader from '../types/ImageGrader';
-import {
-  createImage,
-  isImageDirExist,
-  loadImageToCv,
-  removeImageDir,
-} from '../utils/common';
+import { createImage, loadImageToCv } from '../utils/common';
 import { resolvePromise } from '../utils/resolver';
 import { RequestSchema, requestSchema } from '../utils/schema';
 import Tensorflow from '../utils/Tensorflow';
@@ -73,10 +68,7 @@ export const predictImagesMw = asyncMw<ImageGrader.PredictImagesMw>(
 );
 
 export const returnResultsMw = asyncMw<ImageGrader.ReturnResultsMw>(
-  async (req, res, next) => {
-    if (await isImageDirExist(req.query.times + ''))
-      await removeImageDir(req.query.times + '');
-
+  async (req, res) => {
     if (!req.grades)
       return res.status(400).json({
         code: 400,
