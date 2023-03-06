@@ -1,6 +1,6 @@
 {
   "name": "image-grader",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "main": "index.js",
   "repository": "git@github.com:krsbx/image-grader.git",
   "author": "Muhammad Firdaus Sati <firdaus.sati51@gmail.cm>",

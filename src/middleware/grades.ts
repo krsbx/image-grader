@@ -8,7 +8,7 @@ import {
   loadImageToCv,
   removeImageDir,
 } from '../utils/common';
-import { resolvePromise, sequentialPromise } from '../utils/resolver';
+import { resolvePromise } from '../utils/resolver';
 import { RequestSchema, requestSchema } from '../utils/schema';
 import Tensorflow from '../utils/Tensorflow';
 
@@ -33,7 +33,7 @@ export const validatePayloadMw = asyncMw<ImageGrader.ValidatePayloadMw>(
 
 export const saveImagesMw = asyncMw<ImageGrader.SaveImagesMw>(
   async (req, res, next) => {
-    await sequentialPromise(
+    await Promise.all(
       _.map(req.body, (value, key) =>
         resolvePromise(createImage(value, `${req.query.times}/${key}`))
       )
@@ -45,7 +45,7 @@ export const saveImagesMw = asyncMw<ImageGrader.SaveImagesMw>(
 
 export const loadImagesMw = asyncMw<ImageGrader.LoadImagesMw>(
   async (req, res, next) => {
-    req.images = await sequentialPromise(
+    req.images = await Promise.all(
       _.map(req.body, (_, key) => loadImageToCv(`${req.query.times}/${key}`))
     );
 
@@ -55,7 +55,7 @@ export const loadImagesMw = asyncMw<ImageGrader.LoadImagesMw>(
 
 export const predictImagesMw = asyncMw<ImageGrader.PredictImagesMw>(
   async (req, res, next) => {
-    req.grades = await sequentialPromise(
+    req.grades = await Promise.all(
       _.map(req.images, ([image, err]) => {
         if (err || !image)
           return {
