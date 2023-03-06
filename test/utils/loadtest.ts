@@ -1,9 +1,5 @@
-import { config as dotenvConfig } from 'dotenv';
-import { expand as expandDotenv } from 'dotenv-expand';
 import { loadTest } from 'loadtest';
 import { loadImageToBase64 } from './common';
-
-expandDotenv(dotenvConfig());
 
 type Resolve = {
   totalRequests: number;
@@ -19,10 +15,9 @@ type Resolve = {
 };
 
 export const startLoadTest = async (
-  imagePath: string = 'images/img-AB-231.jpg'
+  imagePath: string = 'images/img-AB-231.jpg',
+  port: number = +(process.env?.PORT ?? 3001)
 ) => {
-  const port = +(process.env?.PORT ?? 3001);
-
   const base64 = await loadImageToBase64(imagePath);
   const payload = {
     base64,

@@ -10,6 +10,7 @@ router.post(
   gradesMw.saveImagesMw,
   gradesMw.loadImagesMw,
   gradesMw.predictImagesMw,
+  gradesMw.cleanupImagesMw,
   gradesMw.returnResultsMw
 );
 

@@ -20,7 +20,16 @@
   "plugins": ["prettier", "@typescript-eslint", "import"],
   "rules": {
     "import/extensions": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
+    "consistent-return": "off",
+    "lines-between-class-members": "off",
+    "import/no-cycle":"warn",
+    "no-plusplus":"off",
+    "no-underscore-dangle": "off",
+    "no-useless-constructor": "off",
+    "no-console": "off",
+    "no-shadow": "warn"
   },
   "settings": {
     "import/parsers": {

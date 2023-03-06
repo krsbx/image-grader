@@ -1,20 +1,21 @@
 import cluster from 'cluster';
-import { config as dotenvConfig } from 'dotenv';
-import { expand as expandDotenv } from 'dotenv-expand';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import os from 'os';
 import { setupClusterKiller } from './config';
 import { SERVER_MODE } from './constant';
 import root from './root';
+import { setupEnv } from './setup';
 
-expandDotenv(dotenvConfig());
+setupEnv();
 
 class Server {
   private static N_CPU: number = os.cpus().length;
+  // eslint-disable-next-line no-use-before-define
   private static _instance: Server;
   private static port: number = +(process.env?.PORT ?? 3001);
   private static app: Express = express();
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   public static init() {
@@ -75,7 +76,7 @@ class Server {
   }
 
   public static autoKillCluster() {
-    return function (req: Request, res: Response, next: NextFunction) {
+    return (req: Request, res: Response, next: NextFunction) => {
       if (Server.nCpu === 1) return next();
 
       return setupClusterKiller(req, res, next);

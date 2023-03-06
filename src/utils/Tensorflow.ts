@@ -1,11 +1,13 @@
 import * as tf from '@tensorflow/tfjs-node';
 import path from 'path';
-import { GRADES, MODEL_PATH } from '../utils/constant';
+import { GRADES, MODEL_PATH } from './constant';
 
 class Tensorflow {
+  // eslint-disable-next-line no-use-before-define
   private static _instance: Tensorflow;
   private static _model: tf.LayersModel;
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   public static async init() {
@@ -13,7 +15,7 @@ class Tensorflow {
     Tensorflow._instance = new Tensorflow();
 
     const model = await tf.loadLayersModel(
-      'file://' + path.resolve(MODEL_PATH, 'model.json')
+      `file://${path.resolve(MODEL_PATH, 'model.json')}`
     );
     Tensorflow._model = model;
   }

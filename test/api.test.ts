@@ -1,5 +1,3 @@
-import { config as dotenvConfig } from 'dotenv';
-import { expand as expandDotenv } from 'dotenv-expand';
 import { Express } from 'express';
 import _ from 'lodash';
 import {
@@ -9,6 +7,7 @@ import {
   readImageDir,
 } from '../src/utils/common';
 import { GRADES } from '../src/utils/constant';
+import { setupEnv } from '../src/utils/setup';
 import Tensorflow from '../src/utils/Tensorflow';
 import { isImageExist, loadImageToBase64 } from './utils/common';
 import { startLoadTest } from './utils/loadtest';
@@ -18,7 +17,7 @@ import {
   createPostRequest,
 } from './utils/mock';
 
-expandDotenv(dotenvConfig());
+setupEnv();
 
 describe('Image Grader', () => {
   let app: Express;
