@@ -16,7 +16,9 @@ export const sequentialPromise = async <
 ) => {
   const results: U[] = [];
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const task of tasks) {
+    // eslint-disable-next-line no-await-in-loop
     results.push((await task) as U);
   }
 
