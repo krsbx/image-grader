@@ -6,8 +6,10 @@ import { BIN_PATH } from './constant';
 
 class OpenCv {
   private static _cv: typeof cv;
+  // eslint-disable-next-line no-use-before-define
   private static _instance: OpenCv;
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   private static setupDom() {
@@ -15,21 +17,26 @@ class OpenCv {
     globalThis.document = dom.window.document;
 
     globalThis.Image = canvas.Image as unknown as typeof globalThis.Image;
-    globalThis.HTMLCanvasElement = canvas.Canvas as unknown as typeof globalThis.HTMLCanvasElement;
-    globalThis.ImageData = canvas.ImageData as unknown as typeof globalThis.ImageData;
-    globalThis.HTMLImageElement = canvas.Image as unknown as typeof globalThis.HTMLImageElement;
+    globalThis.HTMLCanvasElement =
+      canvas.Canvas as unknown as typeof globalThis.HTMLCanvasElement;
+    globalThis.ImageData =
+      canvas.ImageData as unknown as typeof globalThis.ImageData;
+    globalThis.HTMLImageElement =
+      canvas.Image as unknown as typeof globalThis.HTMLImageElement;
   }
 
   private static setupCV() {
     return new Promise((resolve) => {
       (
         globalThis as unknown as {
+          // eslint-disable-next-line @typescript-eslint/ban-types
           Module: Record<string, Function>;
         }
       ).Module = {
         onRuntimeInitialized: resolve,
       };
-      var cv = require(path.resolve(BIN_PATH, 'opencv.js'));
+      // eslint-disable-next-line import/no-dynamic-require, global-require, @typescript-eslint/no-var-requires
+      const cv = require(path.resolve(BIN_PATH, 'opencv.js'));
       globalThis.cv = cv;
 
       OpenCv._cv = cv;

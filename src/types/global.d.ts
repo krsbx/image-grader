@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
 import { Canvas, Image } from 'canvas';
 import { JSDOM } from 'jsdom';
 
@@ -13,6 +15,14 @@ declare global {
   var Module: {
     onRuntimeInitialized: (...args: unknown[]) => void;
   };
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      MODE?: string;
+      PORT?: string;
+      DEBUG?: boolean;
+    }
+  }
 }
 
 export {};

@@ -2,9 +2,13 @@ import asyncMw from 'express-asyncmw';
 import httpStatus from 'http-status';
 import _ from 'lodash';
 import { z } from 'zod';
-import type * as ImageGrader from '../types/ImageGrader';
-import { createImage, loadImageToCv } from '../utils/common';
-import { resolvePromise } from '../utils/resolver';
+import {
+  createImage,
+  isImageDirExist,
+  loadImageToCv,
+  removeImageDir,
+} from '../utils/common';
+import { resolvePromise, sequentialPromise } from '../utils/resolver';
 import { RequestSchema, requestSchema } from '../utils/schema';
 import Tensorflow from '../utils/Tensorflow';
 
@@ -29,7 +33,7 @@ export const validatePayloadMw = asyncMw<ImageGrader.ValidatePayloadMw>(
 
 export const saveImagesMw = asyncMw<ImageGrader.SaveImagesMw>(
   async (req, res, next) => {
-    await Promise.all(
+    await sequentialPromise(
       _.map(req.body, (value, key) =>
         resolvePromise(createImage(value, `${req.query.times}/${key}`))
       )
@@ -41,7 +45,7 @@ export const saveImagesMw = asyncMw<ImageGrader.SaveImagesMw>(
 
 export const loadImagesMw = asyncMw<ImageGrader.LoadImagesMw>(
   async (req, res, next) => {
-    req.images = await Promise.all(
+    req.images = await sequentialPromise(
       _.map(req.body, (_, key) => loadImageToCv(`${req.query.times}/${key}`))
     );
 
@@ -51,7 +55,7 @@ export const loadImagesMw = asyncMw<ImageGrader.LoadImagesMw>(
 
 export const predictImagesMw = asyncMw<ImageGrader.PredictImagesMw>(
   async (req, res, next) => {
-    req.grades = await Promise.all(
+    req.grades = await sequentialPromise(
       _.map(req.images, ([image, err]) => {
         if (err || !image)
           return {
@@ -62,6 +66,20 @@ export const predictImagesMw = asyncMw<ImageGrader.PredictImagesMw>(
         return Tensorflow.instance.predict(image);
       })
     );
+
+    return next();
+  }
+);
+
+export const cleanupImagesMw = asyncMw<ImageGrader.ReturnResultsMw>(
+  async (req, res, next) => {
+    if (
+      Boolean(process.env.DEBUG) ||
+      !(await isImageDirExist(`${req.query.times}`))
+    )
+      return next();
+
+    await removeImageDir(`${req.query.times}`);
 
     return next();
   }
