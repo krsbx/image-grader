@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as tf from '@tensorflow/tfjs-node';
 import path from 'path';
 import { GRADES, MODEL_PATH } from './constant';
@@ -18,6 +19,13 @@ class Tensorflow {
       `file://${path.resolve(MODEL_PATH, 'model.json')}`
     );
     Tensorflow._model = model;
+  }
+
+  public static destroy() {
+    // @ts-ignore
+    delete Tensorflow._instance;
+    // @ts-ignore
+    delete Tensorflow._model;
   }
 
   public static get instance() {
