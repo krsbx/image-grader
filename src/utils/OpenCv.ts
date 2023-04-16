@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import canvas from 'canvas';
 import { JSDOM } from 'jsdom';
 import type cv from 'mirada';
@@ -49,6 +50,13 @@ class OpenCv {
 
     this.setupDom();
     return this.setupCV();
+  }
+
+  public static destroy() {
+    // @ts-ignore
+    delete OpenCv._instance;
+    // @ts-ignore
+    delete OpenCv._cv;
   }
 
   public static get instance() {

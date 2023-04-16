@@ -39,6 +39,7 @@
     "lint-staged": "^13.1.2",
     "loadtest": "^5.2.0",
     "mirada": "^0.0.15",
+    "node-mocks-http": "^1.12.2",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
     "rimraf": "^4.1.2",

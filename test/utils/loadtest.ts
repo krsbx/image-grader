@@ -15,7 +15,7 @@ type Resolve = {
 };
 
 export const startLoadTest = async (
-  imagePath: string = 'images/img-AB-231.jpg',
+  imagePath = 'images/img-AB-231.jpg',
   port: number = +(process.env?.PORT ?? 3001)
 ) => {
   const base64 = await loadImageToBase64(imagePath);
